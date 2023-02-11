@@ -7,17 +7,36 @@ const getAll = async () => {
 
 const createTask = async (task) => {
   const { title } = task;
-  const dataUTC = new Date(Date.now()).toUTCString();
+  const dateUTC = new Date(Date.now()).toUTCString();
   const query = "insert into tasks(title, status, created_at) values(?,?,?)";
   const createdTask = await connection.execute(query, [
     title,
     "pendente",
     dateUTC,
   ]);
-  return createdTask;
+  return { insertId: createdTask.insertId };
+};
+
+const deleteTask = async (id) => {
+  const removedTesk = await connection.execute(
+    "delete from tasks where id = ?",
+    [id]
+  );
+  return removedTesk;
+};
+
+const uptadeTask = async (id, task) => {
+  const query = "update tasks set title = ?, status = ? where id = ?";
+
+  const { title, status } = task;
+
+  const [uptadeTask] = await connection.execute(query, [title, status, id]);
+  return uptadeTask;
 };
 
 module.exports = {
   getAll,
   createTask,
+  deleteTask,
+  uptadeTask,
 };
